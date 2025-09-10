@@ -241,6 +241,101 @@ const videoController = {
         } catch (error) {
             next(error)
         }
+    },
+
+
+    async incrementViewCount(req, res, next) {
+        const { videoId } = req.params
+        const userId = req.user?._id
+
+        const COOL_DOWN_PERIOD = 1000 * 60 * 30; // 30 minutes
+
+        try {
+            const video = await Video.findById(videoId)
+            if (!video) {
+                return res.status(404).json(new ApiResponse(404, {}, "Video not found"));
+            }
+
+            const existing = video?.viewedBy?.find(v => v.userId.toString() === userId.toString())
+
+            console.log(existing);
+
+
+            if (existing) {
+                // let now = ()
+                //  diff is for example if user viewed video at 6:40 and after 5 min watching the same video then 6:45 - 6:40 = 5 min which is within 30 min i.e cooldowntime then views should not be increase until 30min
+                const difference = (new Date().getTime() - existing.lastViewedAt.getTime())
+                if (difference < COOL_DOWN_PERIOD) {
+                    console.log("within cooldown, not increasing views");
+                } else {
+                    // ✅ Enough time passed → count a new view
+                    console.log("views increased after cooldown");
+                    video.views += 1
+                    existing.lastViewedAt = new Date()
+                }
+                await video.save()
+            } else {
+                console.log("first time view");
+                video.views += 1;
+                video.viewedBy.push({
+                    userId, lastViewedAt: new Date()
+                })
+                await video.save()
+            }
+            return res.status(200).json(new ApiResponse(200, video, "views updated "))
+        } catch (error) {
+            next(error)
+        }
+
+        // try {
+        //     const video = await Video.findById(videoId)
+
+        //     const existing = video.viewedBy.find(v => v.userId.toString() === userId)
+        //     console.log(existing);
+
+        //     if (existing) {
+
+        //       if (Date.now() - existing.lastViewedAt.getTime() > COOL_DOWN_PERIOD) {
+
+        //       }
+
+
+        //     } else {
+        //         video.views +=1
+        //         video.viewedBy.push({
+        //             userId,lastViewedAt:new Date()
+        //         })
+        //         await video.save()
+        //     }
+
+
+        //     // if (userId) {
+        //     //     // check if user already viewed recently
+        //     //     const existing = video.viewedBy.find(v => v.userId.toString() === userId)
+        //     //     console.log("existing", existing);
+        //     //     // if not viewed recently or not viewed at all then increment view count
+
+        //     //     if (!existing || (Date.now() - existing.lastViewedAt.getTime()) > COOL_DOWN_PERIOD) {
+        //     //         video.views += 1
+        //     //         if (existing) {
+        //     //             existing.lastViewedAt = new Date()
+        //     //         } else {
+        //     //             console.log("pushing new user to viewedBy");
+
+        //     //             video.viewedBy.push({ userId, lastViewedAt: new Date() })
+        //     //         }
+        //     //         await video.save()
+        //     //     }
+        //     // }
+        //     // else {
+        //     //     video.views += 1
+        //     //     await video.save()
+        //     // }
+
+        //     return res.status(200).json(new ApiResponse(200, video, "video view count updated"))
+        // } catch (error) {
+        //     next(error)
+        // }
     }
 
 }

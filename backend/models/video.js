@@ -32,7 +32,16 @@ const videoSchema = Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
-    }
+    },
+    viewedBy: [{
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
+        lastViewedAt: {
+            type: Date,
+        }
+    }]
 }, {
     timestamps: true
 })

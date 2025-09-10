@@ -32,5 +32,6 @@ router
 
 router.route("/toggle/publish/:videoId").patch(videoController.togglePublishStatus);
 router.route("/channel/:owner").get(videoController.getChannelVideos);
+router.route("/addView/:videoId").post(videoController.incrementViewCount)
 
 export default router
