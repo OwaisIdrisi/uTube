@@ -3,7 +3,7 @@ import { VideoPlayer } from "@/components/shared/Video/VideoPlayer";
 import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { getVideoById } from "@/api/video";
+import { getVideoById, increamentView } from "@/api/video";
 import { toggleSubscription } from "@/api/subscription";
 import { toast } from "sonner";
 import Comment from "@/components/shared/Comment/Comment";
@@ -39,8 +39,18 @@ export default function VideoPage() {
       }
     };
 
+    const increaseViewCount = async () => {
+      try {
+        const response = await increamentView(params.id);
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     if (params.id) {
       fetchVideoById(params.id);
+      increaseViewCount();
     }
   }, [params.id, isSubscribed]);
 

@@ -60,7 +60,6 @@ const commentController = {
             ]).limit(limit).skip(skip_docs)
             const totalDocs = await Comment.find({ video: videoId }).countDocuments()
             const totalPage = Math.ceil(totalDocs / limit)
-            console.log("video comments", comments);
 
             return res.status(200).json(new ApiResponse(200, {
                 comments, pagination: {
@@ -117,7 +116,6 @@ const commentController = {
         const { commentId } = req.params
         try {
             const comment = await Comment.findOneAndDelete({ _id: commentId, owner: req.user._id })
-            console.log(comment);
             return res.status(200).json(new ApiResponse(200, {}, "comment deleted successfully"))
         } catch (error) {
             next(error)
@@ -187,7 +185,6 @@ const commentController = {
             ]).limit(limit).skip(skip_docs)
             const totalDocs = await Comment.find({ tweet: tweetId }).countDocuments()
             const totalPage = Math.ceil(totalDocs / limit)
-            console.log("tweet comments", comments);
             return res.status(200).json(new ApiResponse(200, {
                 comments, pagination: {
                     totalDocs: Number(totalDocs) || 0,

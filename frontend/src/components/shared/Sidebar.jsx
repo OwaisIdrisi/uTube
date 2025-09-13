@@ -14,6 +14,11 @@ import {
   User,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { Button } from "../ui/button";
+import { logout } from "@/api/auth";
+import { logoutState, SetError } from "@/features/authSlice";
+import { toast } from "sonner";
+import { useDispatch } from "react-redux";
 
 const items = [
   { Icon: Home, label: "Home", href: "/" },
@@ -25,7 +30,22 @@ const items = [
   // { Icon: PlaySquare, label: "Your videos", href: "/library" },
 ];
 
+
+
 export function Sidebar({ collapsed, setCollapsed }) {
+  const dispatch = useDispatch();
+  const handleLogout = async () => {
+    try {
+         const response = await logout();
+         console.log(response.data);
+         dispatch(logoutState());
+         toast("Logout successful");
+       } catch (error) {
+         toast.error("Logout failed");
+         console.error("Logout failed:", error);
+         dispatch(SetError("Logout failed"));
+       }
+  }
   return (
     <>
       {/* --- Desktop Sidebar --- */}
@@ -118,6 +138,32 @@ export function Sidebar({ collapsed, setCollapsed }) {
               <span>{label}</span>
             </NavLink>
           ))}
+          <hr />
+          <NavLink
+            key={"Profile"}
+            to={"/profile"}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center gap-2 rounded-md px-3 py-2 text-gray-300 hover:bg-primary hover:text-primary-foreground",
+                isActive && "bg-primary text-primary-foreground"
+              )
+            }
+            aria-label={"Profile"}
+          >
+            <User className="size-5" />
+            <span>Profile</span>
+          </NavLink>
+            <div className="my-4 px-4 w-full items-center gap-1 cursor-pointer">
+            {/* <div className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-300 hover:bg-primary hover:text-primary-foreground"> */}
+              <Button
+                variant="default"
+                aria-label="Sign in"
+                onClick={handleLogout}
+                className="w-full"
+              >
+                Logout
+              </Button>
+            </div>
         </nav>
       </div>
     </>

@@ -54,7 +54,7 @@ const Login = () => {
   // Handle input changes here
   return (
     <div className="flex items-center justify-center gap-6 w-full py-24">
-      <Card className="w-full max-w-sm">
+      <Card className="w-full max-w-sm mx-4">
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
           <CardDescription>
@@ -101,7 +101,7 @@ const Login = () => {
                 </div>
               )}
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button disabled={loading} type="submit" className="w-full">
                   <span>{loading ? "Loading..." : "Login"}</span>
                 </Button>
                 <Button variant="outline" className="w-full">

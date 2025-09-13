@@ -41,3 +41,10 @@ export const deleteVideo = async (videoId) => {
     console.log(response);
     return response.data;
 }
+
+// view increament
+export const increamentView = async (videoId) => {
+    const response = api.post(`/addView/${videoId}`)
+    console.log(response);
+    return response.data
+}
